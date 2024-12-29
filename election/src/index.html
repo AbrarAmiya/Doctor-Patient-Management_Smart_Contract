@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Appointment System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+</head>
+<body>
+    <h1>Healthcare Appointment System</h1>
+
+    <div>
+        <h2>Register Patient</h2>
+        <input type="number" id="patientAge" placeholder="Age">
+        <input type="text" id="patientGender" placeholder="Gender">
+        <input type="text" id="patientDistrict" placeholder="District">
+        <input type="text" id="symptomsDetails" placeholder="Symptoms">
+        <button onclick="registerPatient()">Register Patient</button>
+    </div>
+
+    <div>
+        <h2>Register Doctor</h2>
+        <input type="text" id="doctorName" placeholder="Doctor Name">
+        <input type="text" id="doctorSpecialization" placeholder="Specialization">
+        <button onclick="registerDoctor()">Register Doctor</button>
+    </div>
+
+    <div>
+        <h2>Search Patient or Doctor</h2>
+        <input type="text" id="searchAddress" placeholder="Enter Address">
+        <button onclick="searchPatientDoctor()">Search</button>
+        <p id="searchResult"></p>
+    </div>
+
+    <div>
+        <h2>Book Appointment</h2>
+        <input type="text" id="appointmentDoctor" placeholder="Doctor Address">
+        <input type="text" id="timeSlot" placeholder="Time Slot">
+        <button onclick="bookAppointment()">Book Appointment</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
