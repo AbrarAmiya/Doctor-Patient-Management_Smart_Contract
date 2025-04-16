@@ -1,45 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Appointment System</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Medical Registration</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        
+        body {
+            background: url('images/goku.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #eaeaea;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            background-color: rgba(15, 52, 96, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #16213e;
+        }
+        .card h3, h1 {
+            color: #00aaff;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+        }
+        h3 {
+            font-size: 1.5rem;
+        }
+        input, textarea, select, button {
+            width: 100%;
+            border: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        input, textarea, select {
+            background-color: #16213e;
+            color: #eaeaea;
+        }
+        button {
+            background-color: #00aaff;
+            color: #fff;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #007acc;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            margin-top: 15px;
+            color: #eaeaea;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #00aaff;
+            text-align: center;
+        }
+        table th {
+            background-color: #007acc;
+            font-weight: bold;
+            color: white;
+        }
+        hr {
+            border: 1px solid #16213e;
+        }
+    </style>
 </head>
 <body>
-    <h1>Healthcare Appointment System</h1>
+    <div class="container">
+        <!-- Covid Trend Table -->
+        <div class="card">
+            <h1>Covid Trend Analysis</h1>
+            <div id="covidTrendTable" class="info-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Median Age</th>
+                            <th>Children (%)</th>
+                            <th>Teenagers (%)</th>
+                            <th>Young (%)</th>
+                            <th>Elder (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="medianAge">N/A</td>
+                            <td id="childrenPercentage">0%</td>
+                            <td id="teenagersPercentage">0%</td>
+                            <td id="youngPercentage">0%</td>
+                            <td id="elderPercentage">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <div>
-        <h2>Register Patient</h2>
-        <input type="number" id="patientAge" placeholder="Age">
-        <input type="text" id="patientGender" placeholder="Gender">
-        <input type="text" id="patientDistrict" placeholder="District">
-        <input type="text" id="symptomsDetails" placeholder="Symptoms">
-        <button onclick="registerPatient()">Register Patient</button>
+        <hr />
+
+        <!-- Grid Layout -->
+        <div class="row mt-4">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <div class="card">
+                    <h3>Register as a Patient</h3>
+                    <form id="patientForm">
+                        <input type="number" id="patientAge" placeholder="Age" required>
+                        <input type="text" id="patientGender" placeholder="Gender" required>
+                        <input type="text" id="patientDistrict" placeholder="District" required>
+                        <textarea id="patientSymptoms" placeholder="Symptoms Details" required></textarea>
+                        <button type="submit">Register Patient</button>
+                    </form>
+                </div>
+                <div class="card mt-3">
+                    <h3>Register as a Doctor</h3>
+                    <form id="doctorForm">
+                        <input type="text" id="doctorName" placeholder="Name" required>
+                        <input type="text" id="doctorSpecialization" placeholder="Specialization" required>
+                        <button type="submit">Register Doctor</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <div class="card">
+                    <h3>Admin Panel</h3>
+                    <button id="makeAdmin">Make Admin</button>
+                    <p id="adminStatus">No admin assigned yet.</p>
+                    <hr />
+                    <h3>Update Patient Information</h3>
+                    <form id="updatePatientForm">
+                        <input type="text" id="updatePatientAddress" placeholder="Patient Address" required>
+                        <label for="updateVaccineStatus">Vaccine Status:</label>
+                        <select id="updateVaccineStatus">
+                            <option value="0">NOT_VACCINATED</option>
+                            <option value="1">ONE_DOSE</option>
+                            <option value="2">TWO_DOSE</option>
+                        </select>
+                        <label for="isDead">Is Deceased:</label>
+                        <input type="checkbox" id="isDead">
+                        <button type="submit">Update Patient</button>
+                    </form>
+                    <hr />
+                    <button id="verifyAdmin">Verify Admin</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <!-- Patients and Doctors Section -->
+            <div class="col-md-6">
+                <div class="card">
+                    <h3>Patient and Doctor Information</h3>
+                    <button id="loadPatients">Load Patients</button>
+                    <div id="patientsList" class="info-section"></div>
+                    <button id="loadDoctors" class="mt-3">Load Doctors</button>
+                    <div id="doctorsList" class="info-section"></div>
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div class="col-md-6">
+                <div class="card">
+                    <h3>Appointments</h3>
+                    <form id="appointmentForm">
+                        <input type="text" id="appointmentDoctor" placeholder="Doctor Address" required>
+                        <select id="appointmentSlot">
+                            <option value="Slot 1: 4:00 PM - 4:10 PM">Slot 1</option>
+                            <option value="Slot 2: 4:11 PM - 4:20 PM">Slot 2</option>
+                            <option value="Slot 3: 4:21 PM - 4:30 PM">Slot 3</option>
+                            <option value="Slot 4: 4:31 PM - 4:40 PM">Slot 4</option>
+                        </select>
+                        <button type="submit">Book Appointment</button>
+                    </form>
+                    <div id="appointmentsList" class="info-section"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <!-- All Appointments Section -->
+            <div class="col-md-12">
+                <div class="card">
+                    <h3>All Appointments</h3>
+                    <button id="loadAllAppointments">Load All Appointments</button>
+                    <div id="allAppointmentsList"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div>
-        <h2>Register Doctor</h2>
-        <input type="text" id="doctorName" placeholder="Doctor Name">
-        <input type="text" id="doctorSpecialization" placeholder="Specialization">
-        <button onclick="registerDoctor()">Register Doctor</button>
-    </div>
-
-    <div>
-        <h2>Search Patient or Doctor</h2>
-        <input type="text" id="searchAddress" placeholder="Enter Address">
-        <button onclick="searchPatientDoctor()">Search</button>
-        <p id="searchResult"></p>
-    </div>
-
-    <div>
-        <h2>Book Appointment</h2>
-        <input type="text" id="appointmentDoctor" placeholder="Doctor Address">
-        <input type="text" id="timeSlot" placeholder="Time Slot">
-        <button onclick="bookAppointment()">Book Appointment</button>
-    </div>
-
-    <script src="app.js"></script>
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
 

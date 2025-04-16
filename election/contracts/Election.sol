@@ -34,6 +34,10 @@ contract Election {
 
     mapping(address => Patient) public patients;
     mapping(address => Doctor) public doctors;
+
+    address[] public patientAddresses; // Array for patient addresses
+    address[] public doctorAddresses;  // Array for doctor addresses
+
     Appointment[] public appointments;
 
     string[] public timeSlots = [
@@ -44,7 +48,6 @@ contract Election {
     ];
 
     mapping(address => mapping(string => bool)) public doctorBookings;
-
     uint public appointmentFee = 0.01 ether;
 
     modifier onlyAdmin() {
@@ -63,7 +66,7 @@ contract Election {
     }
 
     constructor() {
-        admin = msg.sender;
+        admin = 0xF7Cd5E272fC093357c961fE68a922A75D40712e1;
     }
 
     function registerPatient(
@@ -73,6 +76,7 @@ contract Election {
         string memory _symptoms_details
     ) public {
         require(patients[msg.sender].id == 0, "Patient already registered");
+
         patients[msg.sender] = Patient({
             id: ++patientCounter,
             age: _age,
@@ -83,81 +87,87 @@ contract Election {
             is_dead: false,
             patientAddress: msg.sender
         });
+
+        patientAddresses.push(msg.sender); // Store patient address
     }
+    function updatePatientData(
+    address _patientAddress,
+    VaccineStatus _vaccine_status,
+    bool _is_dead
+) public onlyAdmin {
+    Patient storage patient = patients[_patientAddress];
+    require(patient.id != 0, "Patient not found");
+
+    patient.vaccine_status = _vaccine_status;
+    patient.is_dead = _is_dead;
+}
+
 
     function registerDoctor(
         string memory _name,
         string memory _specialization
     ) public {
         require(doctors[msg.sender].id == 0, "Doctor already registered");
+
         doctors[msg.sender] = Doctor({
             id: ++doctorCounter,
             name: _name,
             specialization: _specialization,
             doctorAddress: msg.sender
         });
+
+        doctorAddresses.push(msg.sender); // Store doctor address
     }
 
-    function updatePatientData(
-        address _patientAddress,
-        VaccineStatus _vaccine_status,
-        bool _is_dead
-    ) public onlyAdmin {
-        Patient storage patient = patients[_patientAddress];
-        require(patient.id != 0, "Patient not found");
-        require(!patient.is_dead, "Cannot update data of a deceased patient");
-
-        patient.vaccine_status = _vaccine_status;
-        if (_is_dead) {
-            patient.is_dead = true;
-        }
+    function getAllPatients() public view returns (address[] memory) {
+        return patientAddresses;
     }
 
+    function getAllDoctors() public view returns (address[] memory) {
+        return doctorAddresses;
+    }
+
+    // Add bookAppointment function
     function bookAppointment(address doctor, string memory timeSlot) public payable onlyRegisteredPatient {
         require(doctors[doctor].id != 0, "Doctor not found");
-        require(msg.value >= appointmentFee, "Incorrect fee amount");
+        require(msg.value >= appointmentFee, "Insufficient appointment fee");
         require(!doctorBookings[doctor][timeSlot], "Time slot already booked");
 
         doctorBookings[doctor][timeSlot] = true;
+
         appointments.push(Appointment({
             patient: msg.sender,
             timeSlot: timeSlot,
             doctor: doctor
         }));
-
-        if (msg.value > appointmentFee) {
-            payable(msg.sender).transfer(msg.value - appointmentFee);
-        }
     }
 
-    function withdrawFees() public onlyAdmin {
-        payable(admin).transfer(address(this).balance);
-    }
-
+    // Retrieve all appointments
     function getAppointments() public view returns (Appointment[] memory) {
         return appointments;
     }
+function getAllAppointments() public view returns (
+    address[] memory _patients,
+    string[] memory _timeSlots,
+    address[] memory _doctors
+) {
+    uint totalAppointments = appointments.length;
 
-    function getDoctorSchedule(address doctor) public view returns (Appointment[] memory) {
-        uint count = 0;
-        for (uint i = 0; i < appointments.length; i++) {
-            if (appointments[i].doctor == doctor) {
-                count++;
-            }
-        }
+    // Initialize arrays for return
+    _patients = new address[](totalAppointments);
+    _timeSlots = new string[](totalAppointments);
+    _doctors = new address[](totalAppointments);
 
-        Appointment[] memory schedule = new Appointment[](count);
-        uint index = 0;
-        for (uint i = 0; i < appointments.length; i++) {
-            if (appointments[i].doctor == doctor) {
-                schedule[index] = appointments[i];
-                index++;
-            }
-        }
-        return schedule;
+    // Populate arrays with appointment data
+    for (uint i = 0; i < totalAppointments; i++) {
+        Appointment storage appointment = appointments[i];
+        _patients[i] = appointment.patient;
+        _timeSlots[i] = appointment.timeSlot;
+        _doctors[i] = appointment.doctor;
     }
 
-    function seeAllAppointments() public view returns (Appointment[] memory) {
-        return appointments;
-    }
+    return (_patients, _timeSlots, _doctors);
 }
+
+}
+
