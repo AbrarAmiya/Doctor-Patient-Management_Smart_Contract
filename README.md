@@ -3,13 +3,14 @@
 
 ## Objectives:
 - To create ethereum  decentralised web application using truffle, ganache and metamask
-## Submission: 
+
+## Navigate:
 - Five checkpoints.
 
 ## Description:
 In this tutorial, you will learn how to deploy smart contract using the very well-known smart-contract development environment called Truffle (https://trufflesuite.com/)  and Ganache, an in-memory blockchain that simulates Ethereum blockchain functionalities without requiring to setup Ethereum private network. You will also utilise Metamask (https://metamask.io/) to offload several tasks of account management. A combination of these actually abstracts away a lot of internal complexities so that programmers do not need to worry about setting up the development environment.
 
-In this lab, you will learn
+
 - how to install and setup Ganache & Metamask 
 - how to utilise Ganache and Truffle together with Metamask, 
 - how to write and test a smart contract using Truffle and Solidity, and
